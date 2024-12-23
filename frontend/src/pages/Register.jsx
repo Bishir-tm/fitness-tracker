@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { register } from '../features/auth/authSlice';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { register } from "../features/auth/authSlice";
 
 export default function Register() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,14 +17,14 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      return toast.error('Passwords do not match');
+      return toast.error("Passwords do not match");
     }
     try {
       await dispatch(register(formData)).unwrap();
-      toast.success('Registration successful!');
-      navigate('/');
+      toast.success("Registration successful!");
+      navigate("/");
     } catch (err) {
-      toast.error(err.message || 'Registration failed');
+      toast.error(err.message || "Registration failed");
     }
   };
 
@@ -34,7 +34,10 @@ export default function Register() {
         <h2 className="text-3xl font-bold text-center">Register</h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Name
             </label>
             <input
@@ -43,11 +46,16 @@ export default function Register() {
               required
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email
             </label>
             <input
@@ -56,11 +64,16 @@ export default function Register() {
               required
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <input
@@ -69,11 +82,16 @@ export default function Register() {
               required
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
             />
           </div>
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-gray-700"
+            >
               Confirm Password
             </label>
             <input
@@ -82,7 +100,9 @@ export default function Register() {
               required
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border"
               value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
+              }
             />
           </div>
           <button
@@ -91,6 +111,12 @@ export default function Register() {
           >
             Register
           </button>
+          <p className="py-3  flex  text-center justify-center">
+            Already have an account ?
+            <Link to="/login" className="mx-4 text-blue-600">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>

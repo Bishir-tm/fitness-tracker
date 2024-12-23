@@ -1,77 +1,75 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../api/axios';
-
-// Mock API responses
-const mockLogin = async (credentials) => {
-  return {
-    user: { id: 1, name: 'John Doe', email: credentials.email, role: 'user' },
-    token: 'mock-jwt-token'
-  };
-};
-
-const mockRegister = async (userData) => {
-  return {
-    user: { id: 1, ...userData, role: 'user' },
-    token: 'mock-jwt-token'
-  };
-};
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../api/axios";
 
 export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials) => {
-    const response = await mockLogin(credentials);
-    localStorage.setItem('token', response.token);
-    return response.user;
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/login", credentials); // Replace with your backend endpoint
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Login failed");
+    }
   }
 );
 
 export const register = createAsyncThunk(
-  'auth/register',
-  async (userData) => {
-    const response = await mockRegister(userData);
-    localStorage.setItem('token', response.token);
-    return response.user;
+  "auth/register",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/register", userData); // Replace with your backend endpoint
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      return user;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Registration failed"
+      );
+    }
   }
 );
-
 const initialState = {
   user: null,
-  status: 'idle',
+  status: "idle",
   error: null,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     logout: (state) => {
       state.user = null;
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.status = "failed";
+        state.error = action.payload; // Capture error message here
       })
       .addCase(register.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
+        state.error = null;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        state.status = "failed";
+        state.error = action.payload; // Capture error message here
       });
   },
 });
