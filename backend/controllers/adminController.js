@@ -1,4 +1,4 @@
-const Exercise = require("../models/Exercise");
+const Exercise = require("../models/Log");
 const Feedback = require("../models/Feedback");
 const User = require("../models/User");
 
@@ -9,6 +9,24 @@ const getUserLogsByAdmin = async (req, res) => {
     res.status(200).json(logs);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const updateRole = async (req, res) => {
+  const { userId, role } = req.body;
+
+  if (!userId || !role) {
+    return res.status(400).json({ message: "User ID and role are required" });
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.json({ message: "Role updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -32,4 +50,4 @@ const sendFeedback = async (req, res) => {
   }
 };
 
-module.exports = { getUserLogsByAdmin, sendFeedback };
+module.exports = { getUserLogsByAdmin, sendFeedback, updateRole };

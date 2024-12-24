@@ -35,7 +35,7 @@ const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-      res.status(200).json({
+      return res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
@@ -50,4 +50,18 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+// Fetch all users
+const fetchAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    if (users) {
+      return res.status(200).json(users);
+    } else {
+      res.status(401).json({ message: "no users found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, fetchAllUsers };

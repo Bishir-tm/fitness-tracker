@@ -1,5 +1,16 @@
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useSelector } from 'react-redux';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { useSelector } from "react-redux";
 
 export default function ProgressCharts() {
   const { logs } = useSelector((state) => state.logs);
@@ -15,7 +26,12 @@ export default function ProgressCharts() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="weight" stroke="#8884d8" name="Weight (kg)" />
+            <Line
+              type="monotone"
+              dataKey="weight"
+              stroke="#8884d8"
+              name="Weight (kg)"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -29,7 +45,11 @@ export default function ProgressCharts() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="caloriesBurned" fill="#82ca9d" name="Calories (kcal)" />
+            <Bar
+              dataKey="caloriesBurned"
+              fill="#82ca9d"
+              name="Calories (kcal)"
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

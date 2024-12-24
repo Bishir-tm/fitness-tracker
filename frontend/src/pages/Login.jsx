@@ -16,11 +16,12 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(login(formData)).unwrap();
+      const response = await dispatch(login(formData)).unwrap();
       toast.success("Login successful!");
       navigate("/");
     } catch (err) {
-      toast.error(err.message || "Login failed");
+      console.log(err);
+      toast.error(err || "Login failed");
     }
   };
 

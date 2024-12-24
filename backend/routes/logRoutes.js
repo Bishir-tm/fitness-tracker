@@ -1,22 +1,17 @@
 const express = require("express");
+const router = express.Router();
 const { protect } = require("../middleware/authMiddleware");
 const {
+  getLogsByUser,
+  getLogsByUserId,
   createLog,
-  getUserLogs,
-  updateLog,
-  deleteLog,
 } = require("../controllers/logController");
 
-const router = express.Router();
+// GET logs for a specific user
+router.get("/", protect, getLogsByUser);
+router.get("/fetch-logs-by-id/:id", getLogsByUserId);
 
-router
-  .route("/")
-  .post(protect, createLog) // Create a new log
-  .get(protect, getUserLogs); // Get logs for the logged-in user
-
-router
-  .route("/:id")
-  .put(protect, updateLog) // Update a log
-  .delete(protect, deleteLog); // Delete a log
+// POST create a new log
+router.post("/", protect, createLog);
 
 module.exports = router;

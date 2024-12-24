@@ -1,21 +1,25 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const connectDB = require("./config/db");
+const cors = require("cors"); // Import CORS middleware
+const connectToDB = require("./config/db");
 
 // Import route files
 const authRoutes = require("./routes/authRoutes");
 const logRoutes = require("./routes/logRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
 dotenv.config();
-connectDB();
+connectToDB();
 
 const app = express();
 
+app.use(cors()); // Allow requests from the frontend
 app.use(express.json()); // Parse JSON bodies
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/feedback", feedbackRoutes);
 app.use("/api/logs", logRoutes);
 app.use("/api/admin", adminRoutes);
 

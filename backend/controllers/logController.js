@@ -1,87 +1,77 @@
-const Exercise = require("../models/Exercise");
+const Log = require("../models/Log");
 
-// Create a new log
-const createLog = async (req, res) => {
-  const {
-    day,
-    typeOfExercise,
-    duration,
-    caloriesBurned,
-    bloodPressure,
-    heartRate,
-    weight,
-  } = req.body;
-
+// Fetch logs for a specific user
+const getLogsByUser = async (req, res) => {
   try {
-    const log = await Exercise.create({
-      user: req.user._id,
-      day,
-      typeOfExercise,
-      duration,
-      caloriesBurned,
+    const { userId } = req.params.userId ? req.params : req.body.user;
+    const logs = await Log.find({ user: userId }).sort({ date: -1 });
+    return res.status(200).json(logs);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch logs", error: error.message });
+  }
+};
+
+// Fetch logs by specific user id (admin only)
+const getLogsByUserId = async (req, res) => {
+  try {
+    const userId = req.params;
+    const logs = await Log.find({ userId: userId.id }).sort({ date: -1 });
+    return res.status(200).json(logs);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch logs", error: error.message });
+  }
+};
+
+// Add a new log
+const createLog = async (req, res) => {
+  try {
+    const {
+      exerciseType,
       bloodPressure,
       heartRate,
       weight,
+      duration,
+      caloriesBurned,
+    } = req.body;
+
+    const userId = req.body.user.id;
+    if (
+      !userId ||
+      !exerciseType ||
+      !bloodPressure ||
+      !heartRate ||
+      !weight ||
+      !duration ||
+      !caloriesBurned
+    ) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newLog = new Log({
+      userId,
+      exerciseType,
+      bloodPressure,
+      heartRate,
+      weight,
+      duration,
+      caloriesBurned,
     });
 
-    res.status(201).json(log);
+    const savedLog = await newLog.save();
+    return res.status(201).json(savedLog);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res
+      .status(500)
+      .json({ message: "Failed to create log", error: error.message });
   }
 };
 
-// Get all logs for the logged-in user
-const getUserLogs = async (req, res) => {
-  try {
-    const logs = await Exercise.find({ user: req.user._id });
-    res.status(200).json(logs);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+module.exports = {
+  getLogsByUser,
+  getLogsByUserId,
+  createLog,
 };
-
-// Update a log
-const updateLog = async (req, res) => {
-  try {
-    const log = await Exercise.findById(req.params.id);
-
-    if (!log) return res.status(404).json({ message: "Log not found" });
-
-    if (log.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(401)
-        .json({ message: "Not authorized to update this log" });
-    }
-
-    const updatedLog = await Exercise.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true }
-    );
-    res.status(200).json(updatedLog);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Delete a log
-const deleteLog = async (req, res) => {
-  try {
-    const log = await Exercise.findById(req.params.id);
-
-    if (!log) return res.status(404).json({ message: "Log not found" });
-
-    if (log.user.toString() !== req.user._id.toString()) {
-      return res
-        .status(401)
-        .json({ message: "Not authorized to delete this log" });
-    }
-
-    await log.remove();
-    res.status(200).json({ message: "Log deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-module.exports = { createLog, getUserLogs, updateLog, deleteLog };
